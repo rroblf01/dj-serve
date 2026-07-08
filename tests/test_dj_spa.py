@@ -120,6 +120,46 @@ def test_correct_mimetype(rf, tmp_path):
     assert response["Content-Type"] == "text/css"
 
 
+def test_nosniff_header_on_file(rf, tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "app.js").write_text("console.log('hi')")
+    (dist / "index.html").write_text("<html>index</html>")
+
+    request = rf.get("/app.js")
+    response = spa_view(
+        request, path="app.js", dist_dir=str(dist), entry_point="index.html"
+    )
+    assert response["X-Content-Type-Options"] == "nosniff"
+
+
+def test_nosniff_header_on_spa_fallback(rf, tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "index.html").write_text("<html>index</html>")
+
+    request = rf.get("/some/route")
+    response = spa_view(
+        request, path="some/route", dist_dir=str(dist), entry_point="index.html"
+    )
+    assert response["X-Content-Type-Options"] == "nosniff"
+
+
+def test_nosniff_header_on_error_page(rf, tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    error_400 = tmp_path / "400.html"
+    error_400.write_text("<html>bad request</html>")
+
+    request = rf.get("/")
+    response = spa_view(
+        request, path="", dist_dir=str(dist), entry_point="nonexistent.html",
+        error_400_path=str(error_400)
+    )
+    assert response.status_code == 400
+    assert response["X-Content-Type-Options"] == "nosniff"
+
+
 def test_cache_control_none(rf, tmp_path):
     dist = tmp_path / "dist"
     dist.mkdir()
