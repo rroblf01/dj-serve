@@ -276,8 +276,12 @@ def test_cache_control_in_dj_spa(tmp_path):
     assert pattern.default_args["cache_control"] == "public, max-age=86400"
 
 
-def test_url_pattern_resolves():
-    pattern = dj_spa("/", "/tmp/dist")
+def test_url_pattern_resolves(tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "index.html").write_text("<html>index</html>")
+
+    pattern = dj_spa("/", str(dist))
     match = pattern.resolve("/")
     assert match is not None
     assert match.kwargs["path"] == ""
@@ -295,8 +299,12 @@ def test_url_pattern_resolves():
     assert match.kwargs["path"] == "app/about"
 
 
-def test_url_pattern_with_prefix():
-    pattern = dj_spa("/app", "/tmp/dist")
+def test_url_pattern_with_prefix(tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "index.html").write_text("<html>index</html>")
+
+    pattern = dj_spa("/app", str(dist))
     # Should not match root
     match = pattern.resolve("/")
     assert match is None
