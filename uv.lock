@@ -59,6 +59,7 @@ async = [
     { name = "aiofiles" },
 ]
 dev = [
+    { name = "aiofiles" },
     { name = "django-stubs" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -80,11 +81,12 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiofiles", marker = "extra == 'async'", specifier = ">=23.0" },
+    { name = "aiofiles", marker = "extra == 'async'", specifier = ">=25.1.0" },
+    { name = "aiofiles", marker = "extra == 'dev'", specifier = ">=25.1.0" },
     { name = "django", specifier = ">=4.0" },
     { name = "django-stubs", marker = "extra == 'dev'", specifier = ">=5" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.1.1" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=1.4.0" },
     { name = "pytest-django", marker = "extra == 'dev'", specifier = ">=4" },
     { name = "ruff", marker = "extra == 'dev'", specifier = "==0.15.20" },
     { name = "ty", marker = "extra == 'dev'", specifier = "==0.0.56" },
@@ -93,10 +95,10 @@ provides-extras = ["async", "dev"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "aiofiles", specifier = ">=23.0" },
+    { name = "aiofiles", specifier = ">=25.1.0" },
     { name = "django-stubs", specifier = ">=5" },
-    { name = "pytest", specifier = ">=8" },
-    { name = "pytest-asyncio", specifier = ">=0.23" },
+    { name = "pytest", specifier = ">=9.1.1" },
+    { name = "pytest-asyncio", specifier = ">=1.4.0" },
     { name = "pytest-django", specifier = ">=4" },
     { name = "ruff", specifier = "==0.15.20" },
     { name = "ty", specifier = "==0.0.56" },
