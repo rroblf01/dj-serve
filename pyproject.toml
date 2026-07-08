@@ -1,6 +1,6 @@
 [project]
 name = "dj-serve"
-version = "1.0.0"
+version = "1.1.0"
 description = "Serve SPAs (Vue, React, Angular, vanilla HTML) directly from Django"
 readme = "README.md"
 keywords = ["django", "spa", "static", "vue", "react", "angular", "frontend"]
