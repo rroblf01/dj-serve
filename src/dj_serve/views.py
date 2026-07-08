@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 CacheControl = str | dict[str, str] | None
 
 
-def spa_view(
+def serve_view(
     request: HttpRequest,
     path: str,
     dist_dir: str,
@@ -56,14 +56,14 @@ def spa_view(
             return resp
         return HttpResponseNotFound("Not Found")
     except Exception:
-        logger.exception("Error serving SPA file")
+        logger.exception("Error serving serve file")
         resp = _error_response(error_500_path, 500, cache_control)
         if resp is not None:
             return resp
         return HttpResponseNotFound("Server Error", status=500)
 
 
-async def async_spa_view(
+async def async_serve_view(
     request: HttpRequest,
     path: str,
     dist_dir: str,
@@ -111,7 +111,7 @@ async def async_spa_view(
             return resp
         return HttpResponseNotFound("Not Found")
     except Exception:
-        logger.exception("Error serving SPA file (async)")
+        logger.exception("Error serving serve file (async)")
         resp = await _async_error_response(error_500_path, 500, cache_control)
         if resp is not None:
             return resp
