@@ -2,7 +2,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/dj-spa.svg)](https://pypi.org/project/dj-spa/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Typing: Typed](https://img.shields.io/badge/typing-PEP%20561-brightgreen.svg)](https://peps.python.org/pep-0561/)
-[![CI](https://github.com/rroblf01/dj-spa/actions/workflows/ci.yml/badge.svg)](https://github.com/rroblf01/dj-spa/actions/workflows/ci.yml)
+[![CI](https://github.com/rroblf01/dj-spa/actions/workflows/test.yml/badge.svg)](https://github.com/rroblf01/dj-spa/actions/workflows/test.yml)
 
 # dj-spa
 
