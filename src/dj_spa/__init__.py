@@ -1,7 +1,7 @@
 from django.urls import re_path
 from django.urls.resolvers import URLPattern
 
-from .views import spa_view
+from .views import CacheControl, spa_view
 
 
 def dj_spa(
@@ -10,6 +10,7 @@ def dj_spa(
     entry_point: str = "index.html",
     error_400: str | None = None,
     error_500: str | None = None,
+    cache_control: CacheControl = None,
 ) -> URLPattern:
     prefix = prefix.rstrip("/")
     regex = rf"^{prefix}/(?P<path>.*)$"
@@ -21,5 +22,6 @@ def dj_spa(
             "entry_point": entry_point,
             "error_400_path": error_400,
             "error_500_path": error_500,
+            "cache_control": cache_control,
         },
     )
