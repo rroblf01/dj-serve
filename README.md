@@ -2,6 +2,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/dj-spa.svg)](https://pypi.org/project/dj-spa/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Typing: Typed](https://img.shields.io/badge/typing-PEP%20561-brightgreen.svg)](https://peps.python.org/pep-0561/)
+[![CI](https://github.com/rroblf01/dj-spa/actions/workflows/ci.yml/badge.svg)](https://github.com/rroblf01/dj-spa/actions/workflows/ci.yml)
 
 # dj-spa
 
@@ -86,6 +87,29 @@ dj_spa("/", "site/", entry_point="index.html")
 
 Works the same way — SPA fallback just means unknown routes serve `index.html`.
 
+### Cache-Control headers
+
+```python
+dj_spa("/", "dist/", cache_control="public, max-age=3600")
+```
+
+Apply the same value to all responses, or use a dict with glob patterns:
+
+```python
+dj_spa("/", "dist/", cache_control={
+    "*.html": "no-cache",
+    "*.css":  "public, max-age=31536000, immutable",
+    "*.js":   "public, max-age=31536000, immutable",
+    "*":      "public, max-age=3600",
+})
+```
+
+| `cache_control` | Behaviour |
+|-----------------|-----------|
+| `None` (default) | No `Cache-Control` header |
+| `str` | Same value for every response |
+| `dict[str, str]` | Glob patterns matched against the filename; first match wins |
+
 ## API
 
 ```python
@@ -95,6 +119,7 @@ def dj_spa(
     entry_point: str = "index.html",
     error_400: str | None = None,
     error_500: str | None = None,
+    cache_control: str | dict[str, str] | None = None,
 ) -> URLPattern:
 ```
 
@@ -105,6 +130,7 @@ def dj_spa(
 | `entry_point` | `"index.html"` | HTML file to serve for SPA fallback (client-side routing) |
 | `error_400` | `None` | Path to a custom 400 error page |
 | `error_500` | `None` | Path to a custom 500 error page |
+| `cache_control` | `None` | `Cache-Control` header value. `str` for all files, `dict` for per-pattern (glob) |
 
 ## How it works
 
