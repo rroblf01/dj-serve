@@ -47,6 +47,7 @@ def spa_view(
 def _file_response(path: Path, forced_type: str | None = None, cache_control: CacheControl = None) -> FileResponse:
     content_type = forced_type or mimetypes.guess_type(str(path))[0] or "application/octet-stream"
     response = FileResponse(open(path, "rb"), content_type=content_type)
+    response["X-Content-Type-Options"] = "nosniff"
     _apply_cache_control(response, cache_control, path.name)
     return response
 
@@ -54,6 +55,7 @@ def _file_response(path: Path, forced_type: str | None = None, cache_control: Ca
 def _error_response(error_path: str | None, status: int, cache_control: CacheControl = None) -> FileResponse | None:
     if error_path and Path(error_path).exists():
         response = FileResponse(open(error_path, "rb"), content_type="text/html", status=status)
+        response["X-Content-Type-Options"] = "nosniff"
         _apply_cache_control(response, cache_control, Path(error_path).name)
         return response
     return None
