@@ -41,11 +41,11 @@ Repository = "https://github.com/rroblf01/dj-spa"
 Issues = "https://github.com/rroblf01/dj-spa/issues"
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "pytest-django>=4", "ruff>=0.11"]
+dev = ["pytest>=8", "pytest-django>=4", "ruff==0.15.20", "ty==0.0.56", "django-stubs>=5"]
 
 [build-system]
 requires = ["uv_build>=0.11.15,<0.12.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
-dev = ["pytest>=8", "pytest-django>=4", "ruff>=0.11"]
+dev = ["pytest>=8", "pytest-django>=4", "ruff==0.15.20", "ty==0.0.56", "django-stubs>=5"]
