@@ -1,12 +1,14 @@
-__all__ = ["dj_spa", "DjSpaConfigError"]
+__all__ = ["dj_spa", "dj_spa_middleware", "DjSpaConfigError"]
 
 import logging
 from typing import Callable
 
+from django.conf import settings
 from django.urls import re_path
 from django.urls.resolvers import URLPattern
 
 from .config import DjSpaConfigError, validate_config
+from .middleware import dj_spa_middleware
 from .views import CacheControl, async_spa_view, spa_view
 
 logger = logging.getLogger(__name__)
@@ -41,6 +43,15 @@ def dj_spa(
     logger.debug(f"Configuring dj-spa: prefix={prefix}, dist_dir={dist_dir}")
     validate_config(dist_dir, entry_point, error_400, error_500)
 
+    # Warn if using builtin in production without static middleware
+    if not settings.DEBUG and not _has_static_middleware():
+        server_type = "asgi.py" if async_mode else "wsgi.py"
+        logger.warning(
+            f"dj-spa is using the builtin static file server in production. "
+            f"For better performance, configure dj_spa_middleware() in your "
+            f"{server_type} with the appropriate backend."
+        )
+
     prefix = prefix.rstrip("/")
     regex = rf"^{prefix}/(?P<path>.*)$"
     view: Callable = async_spa_view if async_mode else spa_view
@@ -55,3 +66,12 @@ def dj_spa(
             "cache_control": cache_control,
         },
     )
+
+
+def _has_static_middleware() -> bool:
+    """Check if WhiteNoise or WhiteSnout is configured in Django middleware."""
+    middleware = getattr(settings, "MIDDLEWARE", [])
+    for mw in middleware:
+        if "whitenoise" in mw.lower() or "whitesnout" in mw.lower():
+            return True
+    return False
