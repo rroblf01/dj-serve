@@ -1,18 +1,18 @@
-[![PyPI version](https://img.shields.io/pypi/v/dj-spa.svg)](https://pypi.org/project/dj-spa/)
-[![Python versions](https://img.shields.io/pypi/pyversions/dj-spa.svg)](https://pypi.org/project/dj-spa/)
+[![PyPI version](https://img.shields.io/pypi/v/dj-serve.svg)](https://pypi.org/project/dj-serve/)
+[![Python versions](https://img.shields.io/pypi/pyversions/dj-serve.svg)](https://pypi.org/project/dj-serve/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Typing: Typed](https://img.shields.io/badge/typing-PEP%20561-brightgreen.svg)](https://peps.python.org/pep-0561/)
-[![CI](https://github.com/rroblf01/dj-spa/actions/workflows/test.yml/badge.svg)](https://github.com/rroblf01/dj-spa/actions/workflows/test.yml)
+[![CI](https://github.com/rroblf01/dj-serve/actions/workflows/test.yml/badge.svg)](https://github.com/rroblf01/dj-serve/actions/workflows/test.yml)
 
-# dj-spa
+# dj-serve
 
 Serve SPAs (Vue, React, Angular, Svelte, or vanilla HTML) directly from Django — no separate static server needed.
 
 ```python
-from dj_spa import dj_spa
+from dj_serve import dj_serve
 
 urlpatterns = [
-    dj_spa("/", "dist/", "index.html", "dist/400.html", "dist/500.html"),
+    dj_serve("/", "dist/", "index.html", "dist/400.html", "dist/500.html"),
 ]
 ```
 
@@ -23,9 +23,9 @@ Traditional Django + SPA setups require either:
 - **A separate static file server** (nginx, Apache, CDN) — adds deployment complexity.
 - **`django.contrib.staticfiles`** — not designed for SPAs; no client-side routing fallback, no custom error pages per frontend.
 
-`dj-spa` solves both:
+`dj-serve` solves both:
 
-| Feature | `staticfiles` | `dj-spa` |
+| Feature | `staticfiles` | `dj-serve` |
 |---------|---------------|----------|
 | SPA fallback (client-side routing) | ❌ | ✅ |
 | Custom 400/500 pages per SPA | ❌ | ✅ |
@@ -37,7 +37,7 @@ Traditional Django + SPA setups require either:
 ## Installation
 
 ```bash
-pip install dj-spa
+pip install dj-serve
 ```
 
 Requires **Django ≥ 4.0** and **Python ≥ 3.10**.
@@ -48,16 +48,16 @@ Requires **Django ≥ 4.0** and **Python ≥ 3.10**.
 
 ```python
 from django.urls import include, path
-from dj_spa import dj_spa
+from dj_serve import dj_serve
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("myapi.urls")),
-    dj_spa("/", "dist/"),
+    dj_serve("/", "dist/"),
 ]
 ```
 
-`dj_spa("/", "dist/")` will:
+`dj_serve("/", "dist/")` will:
 
 1. Serve files from `dist/` (e.g., `dist/style.css` at `/style.css`).
 2. For any other route under `/`, serve `dist/index.html` — this enables client-side routing (Vue Router, React Router, etc.).
@@ -66,7 +66,7 @@ urlpatterns = [
 ### With custom error pages
 
 ```python
-dj_spa("/", "dist/", error_400="dist/400.html", error_500="dist/500.html")
+dj_serve("/", "dist/", error_400="dist/400.html", error_500="dist/500.html")
 ```
 
 Error pages are served **only for routes under this prefix** — your API and admin endpoints keep their default error handling.
@@ -74,7 +74,7 @@ Error pages are served **only for routes under this prefix** — your API and ad
 ### With a prefix
 
 ```python
-dj_spa("/app", "dist/", "index.html")
+dj_serve("/app", "dist/", "index.html")
 ```
 
 Serves the SPA at `/app/`, `/app/about`, `/app/dashboard`, etc.
@@ -82,7 +82,7 @@ Serves the SPA at `/app/`, `/app/about`, `/app/dashboard`, etc.
 ### Vanilla HTML site
 
 ```python
-dj_spa("/", "site/", entry_point="index.html")
+dj_serve("/", "site/", entry_point="index.html")
 ```
 
 Works the same way — SPA fallback just means unknown routes serve `index.html`.
@@ -90,13 +90,13 @@ Works the same way — SPA fallback just means unknown routes serve `index.html`
 ### Cache-Control headers
 
 ```python
-dj_spa("/", "dist/", cache_control="public, max-age=3600")
+dj_serve("/", "dist/", cache_control="public, max-age=3600")
 ```
 
 Apply the same value to all responses, or use a dict with glob patterns:
 
 ```python
-dj_spa("/", "dist/", cache_control={
+dj_serve("/", "dist/", cache_control={
     "*.html": "no-cache",
     "*.css":  "public, max-age=31536000, immutable",
     "*.js":   "public, max-age=31536000, immutable",
@@ -113,7 +113,7 @@ dj_spa("/", "dist/", cache_control={
 ## API
 
 ```python
-def dj_spa(
+def dj_serve(
     prefix: str,
     dist_dir: str,
     entry_point: str = "index.html",
@@ -132,7 +132,7 @@ def dj_spa(
 | `error_400` | `None` | Path to a custom 400 error page |
 | `error_500` | `None` | Path to a custom 500 error page |
 | `cache_control` | `None` | `Cache-Control` header value. `str` for all files, `dict` for per-pattern (glob) |
-| `async_mode` | `False` | Use async I/O with `aiofiles`. Requires `pip install dj-spa[async]` |
+| `async_mode` | `False` | Use async I/O with `aiofiles`. Requires `pip install dj-serve[async]` |
 
 ## How it works
 
@@ -147,12 +147,12 @@ All error handling is **contained within the view** — no global `handler400`/`
 
 ## ASGI Support
 
-dj-spa works with both WSGI and ASGI servers (uvicorn, daphne, hypercorn).
+dj-serve works with both WSGI and ASGI servers (uvicorn, daphne, hypercorn).
 
 ### Synchronous mode (default)
 
 ```python
-dj_spa("/", "dist/")
+dj_serve("/", "dist/")
 ```
 
 Uses synchronous I/O. Django runs the view in a threadpool under ASGI.
@@ -160,7 +160,7 @@ Uses synchronous I/O. Django runs the view in a threadpool under ASGI.
 ### Async mode
 
 ```python
-dj_spa("/", "dist/", async_mode=True)
+dj_serve("/", "dist/", async_mode=True)
 ```
 
 Uses non-blocking I/O with `aiofiles`. Best for ASGI servers under high concurrency.
@@ -168,12 +168,12 @@ Uses non-blocking I/O with `aiofiles`. Best for ASGI servers under high concurre
 Install the async extra:
 
 ```bash
-pip install dj-spa[async]
+pip install dj-serve[async]
 ```
 
 ## Production Deployment
 
-For production, dj-spa provides `dj_spa_middleware()` which wraps your Django application with production-grade static file serving:
+For production, dj-serve provides `dj_serve_middleware()` which wraps your Django application with production-grade static file serving:
 
 - **WSGI** (gunicorn, waitress, uwsgi, etc.) → uses [WhiteNoise](https://whitenoise.readthedocs.io/)
 - **ASGI** (uvicorn, daphne, hypercorn, etc.) → uses [WhiteSnout](https://github.com/rroblf01/whitesnout)
@@ -182,13 +182,13 @@ For production, dj-spa provides `dj_spa_middleware()` which wraps your Django ap
 
 ```bash
 # For WSGI deployments
-pip install dj-spa[wsgi]
+pip install dj-serve[wsgi]
 
 # For ASGI deployments
-pip install dj-spa[asgi]
+pip install dj-serve[asgi]
 
 # For both
-pip install dj-spa[wsgi,asgi]
+pip install dj-serve[wsgi,asgi]
 ```
 
 ### WSGI Deployment
@@ -197,10 +197,10 @@ In your `wsgi.py`:
 
 ```python
 from django.core.wsgi import get_wsgi_application
-from dj_spa import dj_spa_middleware
+from dj_serve import dj_serve_middleware
 
 application = get_wsgi_application()
-application = dj_spa_middleware(application, "dist/")
+application = dj_serve_middleware(application, "dist/")
 ```
 
 ### ASGI Deployment
@@ -209,10 +209,10 @@ In your `asgi.py`:
 
 ```python
 from django.core.asgi import get_asgi_application
-from dj_spa import dj_spa_middleware
+from dj_serve import dj_serve_middleware
 
 application = get_asgi_application()
-application = dj_spa_middleware(application, "dist/", async_mode=True)
+application = dj_serve_middleware(application, "dist/", async_mode=True)
 ```
 
 ### Advanced Configuration
@@ -221,7 +221,7 @@ Pass additional options to the underlying middleware:
 
 ```python
 # WSGI with WhiteNoise options
-application = dj_spa_middleware(
+application = dj_serve_middleware(
     application,
     "dist/",
     max_age=86400,  # 1 day cache
@@ -229,7 +229,7 @@ application = dj_spa_middleware(
 )
 
 # ASGI with WhiteSnout options
-application = dj_spa_middleware(
+application = dj_serve_middleware(
     application,
     "dist/",
     async_mode=True,
@@ -243,27 +243,27 @@ application = dj_spa_middleware(
 The middleware and URL pattern work together:
 
 1. **Middleware** intercepts requests for static files (CSS, JS, images) and serves them with compression, caching, and security headers
-2. **`dj_spa()` URL pattern** handles SPA routing — when a file isn't found, it serves `index.html` for client-side routing
+2. **`dj_serve()` URL pattern** handles SPA routing — when a file isn't found, it serves `index.html` for client-side routing
 
 ```python
 # urls.py — SPA fallback (always needed)
-from dj_spa import dj_spa
+from dj_serve import dj_serve
 
 urlpatterns = [
-    dj_spa("/", "dist/"),
+    dj_serve("/", "dist/"),
 ]
 
 # wsgi.py or asgi.py — production static file serving
-from dj_spa import dj_spa_middleware
+from dj_serve import dj_serve_middleware
 
-application = dj_spa_middleware(application, "dist/", async_mode=True)
+application = dj_serve_middleware(application, "dist/", async_mode=True)
 ```
 
 ### Backend Comparison
 
 | Feature | Builtin | WhiteNoise (WSGI) | WhiteSnout (ASGI) |
 |---------|---------|-------------------|-------------------|
-| **SPA fallback** | ✅ | ❌ (needs dj-spa) | ❌ (needs dj-spa) |
+| **SPA fallback** | ✅ | ❌ (needs dj-serve) | ❌ (needs dj-serve) |
 | **Compression** | ❌ | gzip + brotli | gzip + brotli |
 | **ETag / 304** | ❌ | ✅ | ✅ |
 | **Async native** | ❌ | ❌ (WSGI) | ✅ |
@@ -272,8 +272,8 @@ application = dj_spa_middleware(application, "dist/", async_mode=True)
 
 ### Development vs Production
 
-- **Development** (`DEBUG=True`): Use `dj_spa()` URL pattern only — no warning
-- **Production** (`DEBUG=False`): Configure `dj_spa_middleware()` in `wsgi.py` or `asgi.py` — otherwise a warning is logged
+- **Development** (`DEBUG=True`): Use `dj_serve()` URL pattern only — no warning
+- **Production** (`DEBUG=False`): Configure `dj_serve_middleware()` in `wsgi.py` or `asgi.py` — otherwise a warning is logged
 
 ## Testing locally
 
