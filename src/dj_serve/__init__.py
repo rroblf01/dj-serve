@@ -1,4 +1,4 @@
-__all__ = ["dj_spa", "dj_spa_middleware", "DjSpaConfigError"]
+__all__ = ["dj_serve", "dj_serve_middleware", "DjServeConfigError"]
 
 import logging
 from typing import Callable
@@ -7,14 +7,14 @@ from django.conf import settings
 from django.urls import re_path
 from django.urls.resolvers import URLPattern
 
-from .config import DjSpaConfigError, validate_config
-from .middleware import dj_spa_middleware
+from .config import DjServeConfigError, validate_config
+from .middleware import dj_serve_middleware
 from .views import CacheControl, async_spa_view, spa_view
 
 logger = logging.getLogger(__name__)
 
 
-def dj_spa(
+def dj_serve(
     prefix: str,
     dist_dir: str,
     entry_point: str = "index.html",
@@ -38,7 +38,7 @@ def dj_spa(
         URLPattern for Django URL configuration.
 
     Raises:
-        DjSpaConfigError: If configuration is invalid.
+        DjServeConfigError: If configuration is invalid.
     """
     logger.debug(f"Configuring dj-spa: prefix={prefix}, dist_dir={dist_dir}")
     validate_config(dist_dir, entry_point, error_400, error_500)
@@ -48,7 +48,7 @@ def dj_spa(
         server_type = "asgi.py" if async_mode else "wsgi.py"
         logger.warning(
             f"dj-spa is using the builtin static file server in production. "
-            f"For better performance, configure dj_spa_middleware() in your "
+            f"For better performance, configure dj_serve_middleware() in your "
             f"{server_type} with the appropriate backend."
         )
 

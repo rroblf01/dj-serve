@@ -4,7 +4,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
-class DjSpaConfigError(Exception):
+class DjServeConfigError(Exception):
     """Raised when dj-spa configuration is invalid."""
 
 
@@ -23,19 +23,19 @@ def validate_config(
         error_500_path: Optional path to custom 500 error page.
 
     Raises:
-        DjSpaConfigError: If configuration is invalid.
+        DjServeConfigError: If configuration is invalid.
     """
     dist_path = Path(dist_dir)
 
     if not dist_path.exists():
-        raise DjSpaConfigError(f"dist_dir does not exist: {dist_dir}")
+        raise DjServeConfigError(f"dist_dir does not exist: {dist_dir}")
 
     if not dist_path.is_dir():
-        raise DjSpaConfigError(f"dist_dir is not a directory: {dist_dir}")
+        raise DjServeConfigError(f"dist_dir is not a directory: {dist_dir}")
 
     entry_path = dist_path / entry_point
     if not entry_path.exists():
-        raise DjSpaConfigError(
+        raise DjServeConfigError(
             f"entry_point '{entry_point}' not found in dist_dir: {entry_path}"
         )
 

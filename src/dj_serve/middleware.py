@@ -1,6 +1,6 @@
 """Production static file middleware integration for dj-spa.
 
-This module provides dj_spa_middleware() which wraps a Django application
+This module provides dj_serve_middleware() which wraps a Django application
 with WhiteNoise (WSGI) or WhiteSnout (ASGI) for production-grade static
 file serving.
 """
@@ -11,7 +11,7 @@ from typing import Any, Callable
 logger = logging.getLogger(__name__)
 
 
-def dj_spa_middleware(
+def dj_serve_middleware(
     app: Callable,
     dist_dir: str,
     async_mode: bool = False,
@@ -41,18 +41,18 @@ def dj_spa_middleware(
         WSGI (gunicorn, waitress, etc.):
 
             from django.core.wsgi import get_wsgi_application
-            from dj_spa import dj_spa_middleware
+            from dj_serve import dj_serve_middleware
 
             application = get_wsgi_application()
-            application = dj_spa_middleware(application, "dist/")
+            application = dj_serve_middleware(application, "dist/")
 
         ASGI (uvicorn, daphne, etc.):
 
             from django.core.asgi import get_asgi_application
-            from dj_spa import dj_spa_middleware
+            from dj_serve import dj_serve_middleware
 
             application = get_asgi_application()
-            application = dj_spa_middleware(application, "dist/", async_mode=True)
+            application = dj_serve_middleware(application, "dist/", async_mode=True)
 
     """
     if async_mode:

@@ -1,5 +1,5 @@
 [project]
-name = "dj-spa"
+name = "dj-serve"
 version = "1.0.0"
 description = "Serve SPAs (Vue, React, Angular, vanilla HTML) directly from Django"
 readme = "README.md"
@@ -36,9 +36,9 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/rroblf01/dj-spa"
-Repository = "https://github.com/rroblf01/dj-spa"
-Issues = "https://github.com/rroblf01/dj-spa/issues"
+Homepage = "https://github.com/rroblf01/dj-serve"
+Repository = "https://github.com/rroblf01/dj-serve"
+Issues = "https://github.com/rroblf01/dj-serve/issues"
 
 [project.optional-dependencies]
 async = ["aiofiles>=25.1.0"]
