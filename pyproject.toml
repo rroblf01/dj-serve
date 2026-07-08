@@ -1,8 +1,9 @@
 [project]
 name = "dj-spa"
-version = "0.1.0"
+version = "1.0.0"
 description = "Serve SPAs (Vue, React, Angular, vanilla HTML) directly from Django"
 readme = "README.md"
+keywords = ["django", "spa", "static", "vue", "react", "angular", "frontend"]
 authors = [
     { name = "Ricardo Robles", email = "ricardo.r.f@hotmail.com" }
 ]
@@ -11,7 +12,7 @@ dependencies = ["django>=4.0"]
 license = "MIT"
 license-files = ["LICENSE"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
     "Framework :: Django",
     "Framework :: Django :: 4.0",
@@ -19,6 +20,9 @@ classifiers = [
     "Framework :: Django :: 4.2",
     "Framework :: Django :: 5.0",
     "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
+    "Framework :: Django :: 6.0",
+    "Framework :: Django :: 6.1",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
@@ -32,9 +36,12 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ricardorobles/dj-spa"
-Repository = "https://github.com/ricardorobles/dj-spa"
-Issues = "https://github.com/ricardorobles/dj-spa/issues"
+Homepage = "https://github.com/rroblf01/dj-spa"
+Repository = "https://github.com/rroblf01/dj-spa"
+Issues = "https://github.com/rroblf01/dj-spa/issues"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-django>=4"]
 
 [build-system]
 requires = ["uv_build>=0.11.15,<0.12.0"]
