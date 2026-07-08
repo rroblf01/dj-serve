@@ -5,7 +5,9 @@ from dj_serve.views import serve_view
 
 
 def _content(response):
-    return b"".join(response.streaming_content)
+    if hasattr(response, "streaming_content"):
+        return b"".join(response.streaming_content)
+    return response.content
 
 
 def test_serve_existing_file(rf, tmp_path):
@@ -376,7 +378,7 @@ def test_500_without_custom_page(rf, tmp_path):
             request, path="", dist_dir=str(dist), entry_point="index.html"
         )
     assert response.status_code == 500
-    assert b"Server Error" in response.content
+    assert b"Server Error" in _content(response)
 
 
 def test_unknown_mime_type_fallback(rf, tmp_path):
@@ -589,7 +591,7 @@ def test_empty_file(rf, tmp_path):
     )
     assert response.status_code == 200
     assert response["Content-Type"] == "text/plain"
-    body = b"".join(response.streaming_content)
+    body = _content(response)
     assert len(body) == 0
 
 
@@ -622,7 +624,7 @@ def test_root_no_entry_no_error_page(rf, tmp_path):
         request, path="", dist_dir=str(dist), entry_point="index.html"
     )
     assert response.status_code == 404
-    assert b"Not Found" in response.content
+    assert b"Not Found" in _content(response)
 
 
 def test_empty_string_error_400_path(rf, tmp_path):

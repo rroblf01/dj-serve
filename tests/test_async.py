@@ -7,7 +7,9 @@ from dj_serve.views import async_serve_view
 
 
 def _content(response):
-    return b"".join(response.streaming_content)
+    if hasattr(response, "streaming_content"):
+        return b"".join(response.streaming_content)
+    return response.content
 
 
 @pytest.mark.asyncio
@@ -314,7 +316,7 @@ async def test_async_500_without_custom_page(rf, tmp_path):
             request, path="", dist_dir=str(dist), entry_point="index.html"
         )
     assert response.status_code == 500
-    assert b"Server Error" in response.content
+    assert b"Server Error" in _content(response)
 
 
 @pytest.mark.asyncio
@@ -478,7 +480,7 @@ async def test_async_non_root_entry_missing_with_error_400(rf, tmp_path):
         error_400_path=str(error_400),
     )
     assert response.status_code == 400
-    body = b"".join(response.streaming_content)
+    body = _content(response)
     assert b"custom 400" in body
 
 

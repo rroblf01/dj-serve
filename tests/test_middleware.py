@@ -125,12 +125,12 @@ def test_middleware_truthy_async_mode():
     with patch("dj_serve.middleware._setup_whitenoise") as mock_wn:
         with patch("dj_serve.middleware._setup_whitesnout") as mock_ws:
             # None -> WSGI (falsy)
-            dj_serve_middleware(app, dist_dir, async_mode=None)
+            dj_serve_middleware(app, dist_dir, async_mode=None)  # type: ignore
             mock_wn.assert_called_once()
             mock_wn.reset_mock()
 
             # 1 -> ASGI (truthy)
-            dj_serve_middleware(app, dist_dir, async_mode=1)
+            dj_serve_middleware(app, dist_dir, async_mode=1)  # type: ignore
             mock_ws.assert_called_once()
 
 
