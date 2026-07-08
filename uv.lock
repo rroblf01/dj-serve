@@ -69,7 +69,7 @@ wheels = [
 ]
 
 [[package]]
-name = "dj-spa"
+name = "dj-serve"
 version = "1.0.0"
 source = { editable = "." }
 dependencies = [
