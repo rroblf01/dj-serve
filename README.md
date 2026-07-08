@@ -120,6 +120,7 @@ def dj_spa(
     error_400: str | None = None,
     error_500: str | None = None,
     cache_control: str | dict[str, str] | None = None,
+    async_mode: bool = False,
 ) -> URLPattern:
 ```
 
@@ -131,6 +132,7 @@ def dj_spa(
 | `error_400` | `None` | Path to a custom 400 error page |
 | `error_500` | `None` | Path to a custom 500 error page |
 | `cache_control` | `None` | `Cache-Control` header value. `str` for all files, `dict` for per-pattern (glob) |
+| `async_mode` | `False` | Use async I/O with `aiofiles`. Requires `pip install dj-spa[async]` |
 
 ## How it works
 
@@ -142,6 +144,32 @@ def dj_spa(
 6. If an exception occurs → serves the custom `error_500` page, or 500.
 
 All error handling is **contained within the view** — no global `handler400`/`handler500` configuration needed.
+
+## ASGI Support
+
+dj-spa works with both WSGI and ASGI servers (uvicorn, daphne, hypercorn).
+
+### Synchronous mode (default)
+
+```python
+dj_spa("/", "dist/")
+```
+
+Uses synchronous I/O. Django runs the view in a threadpool under ASGI.
+
+### Async mode
+
+```python
+dj_spa("/", "dist/", async_mode=True)
+```
+
+Uses non-blocking I/O with `aiofiles`. Best for ASGI servers under high concurrency.
+
+Install the async extra:
+
+```bash
+pip install dj-spa[async]
+```
 
 ## Testing locally
 
