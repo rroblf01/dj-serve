@@ -28,9 +28,7 @@ def test_serve_root_serves_entry(rf, tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     request = rf.get("/")
-    response = spa_view(
-        request, path="", dist_dir=str(dist), entry_point="index.html"
-    )
+    response = spa_view(request, path="", dist_dir=str(dist), entry_point="index.html")
     assert response.status_code == 200
     assert b"<html>index</html>" in _content(response)
 
@@ -81,8 +79,11 @@ def test_custom_400_page(rf, tmp_path):
 
     request = rf.get("/")
     response = spa_view(
-        request, path="", dist_dir=str(dist), entry_point="nonexistent.html",
-        error_400_path=str(error_400)
+        request,
+        path="",
+        dist_dir=str(dist),
+        entry_point="nonexistent.html",
+        error_400_path=str(error_400),
     )
     assert response.status_code == 400
     assert b"bad request" in _content(response)
@@ -99,8 +100,11 @@ def test_custom_500_page(rf, tmp_path):
     with patch("pathlib.Path.exists", exists_mock):
         request = rf.get("/")
         response = spa_view(
-            request, path="", dist_dir=str(dist), entry_point="index.html",
-            error_500_path=str(error_500)
+            request,
+            path="",
+            dist_dir=str(dist),
+            entry_point="index.html",
+            error_500_path=str(error_500),
         )
     assert response.status_code == 500
     assert b"server error" in _content(response)
@@ -153,8 +157,11 @@ def test_nosniff_header_on_error_page(rf, tmp_path):
 
     request = rf.get("/")
     response = spa_view(
-        request, path="", dist_dir=str(dist), entry_point="nonexistent.html",
-        error_400_path=str(error_400)
+        request,
+        path="",
+        dist_dir=str(dist),
+        entry_point="nonexistent.html",
+        error_400_path=str(error_400),
     )
     assert response.status_code == 400
     assert response["X-Content-Type-Options"] == "nosniff"
@@ -181,15 +188,21 @@ def test_cache_control_string(rf, tmp_path):
 
     request = rf.get("/style.css")
     response = spa_view(
-        request, path="style.css", dist_dir=str(dist), entry_point="index.html",
-        cache_control="public, max-age=3600"
+        request,
+        path="style.css",
+        dist_dir=str(dist),
+        entry_point="index.html",
+        cache_control="public, max-age=3600",
     )
     assert response["Cache-Control"] == "public, max-age=3600"
 
     request = rf.get("/")
     response = spa_view(
-        request, path="", dist_dir=str(dist), entry_point="index.html",
-        cache_control="public, max-age=3600"
+        request,
+        path="",
+        dist_dir=str(dist),
+        entry_point="index.html",
+        cache_control="public, max-age=3600",
     )
     assert response["Cache-Control"] == "public, max-age=3600"
 
@@ -210,22 +223,27 @@ def test_cache_control_dict(rf, tmp_path):
 
     request = rf.get("/style.css")
     response = spa_view(
-        request, path="style.css", dist_dir=str(dist), entry_point="index.html",
-        cache_control=cc
+        request,
+        path="style.css",
+        dist_dir=str(dist),
+        entry_point="index.html",
+        cache_control=cc,
     )
     assert response["Cache-Control"] == "public, max-age=31536000, immutable"
 
     request = rf.get("/script.js")
     response = spa_view(
-        request, path="script.js", dist_dir=str(dist), entry_point="index.html",
-        cache_control=cc
+        request,
+        path="script.js",
+        dist_dir=str(dist),
+        entry_point="index.html",
+        cache_control=cc,
     )
     assert response["Cache-Control"] == "public, max-age=3600"
 
     request = rf.get("/")
     response = spa_view(
-        request, path="", dist_dir=str(dist), entry_point="index.html",
-        cache_control=cc
+        request, path="", dist_dir=str(dist), entry_point="index.html", cache_control=cc
     )
     assert response["Cache-Control"] == "no-cache"
 
@@ -238,7 +256,10 @@ def test_cache_control_on_error_page(rf, tmp_path):
 
     request = rf.get("/")
     response = spa_view(
-        request, path="", dist_dir=str(dist), entry_point="nonexistent.html",
+        request,
+        path="",
+        dist_dir=str(dist),
+        entry_point="nonexistent.html",
         error_400_path=str(error_400),
         cache_control={"*.html": "no-cache"},
     )
