@@ -1,4 +1,5 @@
 import fnmatch
+import logging
 import mimetypes
 from io import BytesIO
 from pathlib import Path
@@ -9,6 +10,8 @@ from django.http import (
     HttpResponseBase,
     HttpResponseNotFound,
 )
+
+logger = logging.getLogger(__name__)
 
 CacheControl = str | dict[str, str] | None
 
@@ -53,6 +56,7 @@ def spa_view(
             return resp
         return HttpResponseNotFound("Not Found")
     except Exception:
+        logger.exception("Error serving SPA file")
         resp = _error_response(error_500_path, 500, cache_control)
         if resp is not None:
             return resp
@@ -107,6 +111,7 @@ async def async_spa_view(
             return resp
         return HttpResponseNotFound("Not Found")
     except Exception:
+        logger.exception("Error serving SPA file (async)")
         resp = await _async_error_response(error_500_path, 500, cache_control)
         if resp is not None:
             return resp
