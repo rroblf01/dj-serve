@@ -10,7 +10,7 @@ def static_dir(tmp_path):
     dist.mkdir()
 
     # Create index.html
-    (dist / "index.html").write_text("<html><body>SPA</body></html>")
+    (dist / "index.html").write_text("<html><body>serve</body></html>")
 
     # Create some static files
     (dist / "style.css").write_text("body { color: red; }")

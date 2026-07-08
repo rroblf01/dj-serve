@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 from dj_serve import dj_serve
-from dj_serve.views import async_spa_view
+from dj_serve.views import async_serve_view
 
 
 def _content(response):
@@ -17,7 +17,7 @@ async def test_async_serve_existing_file(rf, tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     request = rf.get("/test.txt")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request, path="test.txt", dist_dir=str(dist), entry_point="index.html"
     )
     assert response.status_code == 200
@@ -31,7 +31,7 @@ async def test_async_serve_root_serves_entry(rf, tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     request = rf.get("/")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request, path="", dist_dir=str(dist), entry_point="index.html"
     )
     assert response.status_code == 200
@@ -39,14 +39,14 @@ async def test_async_serve_root_serves_entry(rf, tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_async_spa_fallback(rf, tmp_path):
+async def test_async_serve_fallback(rf, tmp_path):
     dist = tmp_path / "dist"
     dist.mkdir()
     (dist / "index.html").write_text("<html>index</html>")
 
-    request = rf.get("/some/spa/route")
-    response = await async_spa_view(
-        request, path="some/spa/route", dist_dir=str(dist), entry_point="index.html"
+    request = rf.get("/some/serve/route")
+    response = await async_serve_view(
+        request, path="some/serve/route", dist_dir=str(dist), entry_point="index.html"
     )
     assert response.status_code == 200
     assert b"<html>index</html>" in _content(response)
@@ -59,7 +59,7 @@ async def test_async_missing_file_returns_404(rf, tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     request = rf.get("/nonexistent")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request, path="nonexistent", dist_dir=str(dist), entry_point="nonexistent.html"
     )
     assert response.status_code == 404
@@ -73,7 +73,7 @@ async def test_async_path_traversal_rejected(rf, tmp_path):
     (tmp_path / "secrets.txt").write_text("secret")
 
     request = rf.get("/../secrets.txt")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request, path="../secrets.txt", dist_dir=str(dist), entry_point="index.html"
     )
     assert response.status_code == 404
@@ -87,7 +87,7 @@ async def test_async_custom_400_page(rf, tmp_path):
     error_400.write_text("<html>bad request</html>")
 
     request = rf.get("/")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request,
         path="",
         dist_dir=str(dist),
@@ -115,7 +115,7 @@ async def test_async_custom_500_page(rf, tmp_path):
 
     with patch("aiofiles.os.path.exists", mock_exists):
         request = rf.get("/")
-        response = await async_spa_view(
+        response = await async_serve_view(
             request,
             path="",
             dist_dir=str(dist),
@@ -134,7 +134,7 @@ async def test_async_correct_mimetype(rf, tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     request = rf.get("/style.css")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request, path="style.css", dist_dir=str(dist), entry_point="index.html"
     )
     assert response.status_code == 200
@@ -149,20 +149,20 @@ async def test_async_nosniff_header_on_file(rf, tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     request = rf.get("/app.js")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request, path="app.js", dist_dir=str(dist), entry_point="index.html"
     )
     assert response["X-Content-Type-Options"] == "nosniff"
 
 
 @pytest.mark.asyncio
-async def test_async_nosniff_header_on_spa_fallback(rf, tmp_path):
+async def test_async_nosniff_header_on_serve_fallback(rf, tmp_path):
     dist = tmp_path / "dist"
     dist.mkdir()
     (dist / "index.html").write_text("<html>index</html>")
 
     request = rf.get("/some/route")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request, path="some/route", dist_dir=str(dist), entry_point="index.html"
     )
     assert response["X-Content-Type-Options"] == "nosniff"
@@ -176,7 +176,7 @@ async def test_async_nosniff_header_on_error_page(rf, tmp_path):
     error_400.write_text("<html>bad request</html>")
 
     request = rf.get("/")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request,
         path="",
         dist_dir=str(dist),
@@ -195,7 +195,7 @@ async def test_async_cache_control_none(rf, tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     request = rf.get("/style.css")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request, path="style.css", dist_dir=str(dist), entry_point="index.html"
     )
     assert "Cache-Control" not in response
@@ -209,7 +209,7 @@ async def test_async_cache_control_string(rf, tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     request = rf.get("/style.css")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request,
         path="style.css",
         dist_dir=str(dist),
@@ -219,7 +219,7 @@ async def test_async_cache_control_string(rf, tmp_path):
     assert response["Cache-Control"] == "public, max-age=3600"
 
     request = rf.get("/")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request,
         path="",
         dist_dir=str(dist),
@@ -245,7 +245,7 @@ async def test_async_cache_control_dict(rf, tmp_path):
     }
 
     request = rf.get("/style.css")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request,
         path="style.css",
         dist_dir=str(dist),
@@ -255,7 +255,7 @@ async def test_async_cache_control_dict(rf, tmp_path):
     assert response["Cache-Control"] == "public, max-age=31536000, immutable"
 
     request = rf.get("/script.js")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request,
         path="script.js",
         dist_dir=str(dist),
@@ -265,7 +265,7 @@ async def test_async_cache_control_dict(rf, tmp_path):
     assert response["Cache-Control"] == "public, max-age=3600"
 
     request = rf.get("/")
-    response = await async_spa_view(
+    response = await async_serve_view(
         request, path="", dist_dir=str(dist), entry_point="index.html", cache_control=cc
     )
     assert response["Cache-Control"] == "no-cache"
@@ -277,7 +277,7 @@ def test_async_mode_in_dj_serve(tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     pattern = dj_serve("/", str(dist), async_mode=True)
-    assert getattr(pattern.callback, "__name__", None) == "async_spa_view"
+    assert getattr(pattern.callback, "__name__", None) == "async_serve_view"
 
 
 def test_sync_mode_in_dj_serve(tmp_path):
@@ -286,7 +286,7 @@ def test_sync_mode_in_dj_serve(tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     pattern = dj_serve("/", str(dist), async_mode=False)
-    assert getattr(pattern.callback, "__name__", None) == "spa_view"
+    assert getattr(pattern.callback, "__name__", None) == "serve_view"
 
 
 def test_default_mode_is_sync(tmp_path):
@@ -295,4 +295,4 @@ def test_default_mode_is_sync(tmp_path):
     (dist / "index.html").write_text("<html>index</html>")
 
     pattern = dj_serve("/", str(dist))
-    assert getattr(pattern.callback, "__name__", None) == "spa_view"
+    assert getattr(pattern.callback, "__name__", None) == "serve_view"
