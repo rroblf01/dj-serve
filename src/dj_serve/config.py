@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 
 class DjServeConfigError(Exception):
-    """Raised when dj-spa configuration is invalid."""
+    """Raised when dj-serve configuration is invalid."""
 
 
 def validate_config(
@@ -14,7 +14,7 @@ def validate_config(
     error_400_path: str | None = None,
     error_500_path: str | None = None,
 ) -> None:
-    """Validate dj-spa configuration at startup.
+    """Validate dj-serve configuration at startup.
 
     Args:
         dist_dir: Path to the directory containing static files.

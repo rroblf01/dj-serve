@@ -77,7 +77,7 @@ async def async_spa_view(
         import aiofiles.os
     except ImportError as exc:
         raise ImportError(
-            "Async mode requires aiofiles. Install it with: pip install dj-spa[async]"
+            "Async mode requires aiofiles. Install it with: pip install dj-serve[async]"
         ) from exc
 
     try:

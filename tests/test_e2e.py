@@ -1,4 +1,4 @@
-"""End-to-end tests for dj-spa with production middleware."""
+"""End-to-end tests for dj-serve with production middleware."""
 
 import pytest
 

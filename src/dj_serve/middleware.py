@@ -1,4 +1,4 @@
-"""Production static file middleware integration for dj-spa.
+"""Production static file middleware integration for dj-serve.
 
 This module provides dj_serve_middleware() which wraps a Django application
 with WhiteNoise (WSGI) or WhiteSnout (ASGI) for production-grade static
@@ -68,7 +68,7 @@ def _setup_whitenoise(app: Callable, dist_dir: str, **kwargs: Any) -> Callable:
     except ImportError as exc:
         raise ImportError(
             "WhiteNoise is required for WSGI static file serving. "
-            "Install it with: pip install dj-spa[wsgi]"
+            "Install it with: pip install dj-serve[wsgi]"
         ) from exc
 
     logger.info(f"Configuring WhiteNoise for WSGI with dist_dir={dist_dir}")
@@ -89,7 +89,7 @@ def _setup_whitesnout(app: Callable, dist_dir: str, **kwargs: Any) -> Callable:
     except ImportError as exc:
         raise ImportError(
             "WhiteSnout is required for ASGI static file serving. "
-            "Install it with: pip install dj-spa[asgi]"
+            "Install it with: pip install dj-serve[asgi]"
         ) from exc
 
     logger.info(f"Configuring WhiteSnout for ASGI with dist_dir={dist_dir}")

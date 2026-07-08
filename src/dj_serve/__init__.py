@@ -40,14 +40,14 @@ def dj_serve(
     Raises:
         DjServeConfigError: If configuration is invalid.
     """
-    logger.debug(f"Configuring dj-spa: prefix={prefix}, dist_dir={dist_dir}")
+    logger.debug(f"Configuring dj-serve: prefix={prefix}, dist_dir={dist_dir}")
     validate_config(dist_dir, entry_point, error_400, error_500)
 
     # Warn if using builtin in production without static middleware
     if not settings.DEBUG and not _has_static_middleware():
         server_type = "asgi.py" if async_mode else "wsgi.py"
         logger.warning(
-            f"dj-spa is using the builtin static file server in production. "
+            f"dj-serve is using the builtin static file server in production. "
             f"For better performance, configure dj_serve_middleware() in your "
             f"{server_type} with the appropriate backend."
         )
