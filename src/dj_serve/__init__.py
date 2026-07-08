@@ -9,7 +9,7 @@ from django.urls.resolvers import URLPattern
 
 from .config import DjServeConfigError, validate_config
 from .middleware import dj_serve_middleware
-from .views import CacheControl, async_spa_view, spa_view
+from .views import CacheControl, async_serve_view, serve_view
 
 logger = logging.getLogger(__name__)
 
@@ -23,10 +23,10 @@ def dj_serve(
     cache_control: CacheControl = None,
     async_mode: bool = False,
 ) -> URLPattern:
-    """Configure SPA serving for Django.
+    """Configure serve serving for Django.
 
     Args:
-        prefix: URL prefix for the SPA (e.g., "/" or "/app").
+        prefix: URL prefix for the serve (e.g., "/" or "/app").
         dist_dir: Path to the directory containing static files.
         entry_point: Name of the entry point HTML file (default: "index.html").
         error_400: Optional path to custom 400 error page.
@@ -54,7 +54,7 @@ def dj_serve(
 
     prefix = prefix.rstrip("/")
     regex = rf"^{prefix}/(?P<path>.*)$"
-    view: Callable = async_spa_view if async_mode else spa_view
+    view: Callable = async_serve_view if async_mode else serve_view
     return re_path(
         regex,
         view,
