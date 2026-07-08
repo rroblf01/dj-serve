@@ -231,30 +231,30 @@ def test_whitesnout_cache_headers_asgi(static_dir):
 
 
 def test_middleware_integration_wsgi(static_dir, settings):
-    """Test full integration with dj_spa_middleware for WSGI."""
-    from dj_spa import dj_spa_middleware
+    """Test full integration with dj_serve_middleware for WSGI."""
+    from dj_serve import dj_serve_middleware
     from django.core.handlers.wsgi import WSGIHandler
 
     # Create Django app
     django_app = WSGIHandler()
 
-    # Wrap with dj_spa_middleware
-    app = dj_spa_middleware(django_app, str(static_dir), async_mode=False)
+    # Wrap with dj_serve_middleware
+    app = dj_serve_middleware(django_app, str(static_dir), async_mode=False)
 
     # Verify it's wrapped
     assert app is not None
 
 
 def test_middleware_integration_asgi(static_dir, settings):
-    """Test full integration with dj_spa_middleware for ASGI."""
-    from dj_spa import dj_spa_middleware
+    """Test full integration with dj_serve_middleware for ASGI."""
+    from dj_serve import dj_serve_middleware
     from django.core.handlers.asgi import ASGIHandler
 
     # Create Django app
     django_app = ASGIHandler()
 
-    # Wrap with dj_spa_middleware
-    app = dj_spa_middleware(django_app, str(static_dir), async_mode=True)
+    # Wrap with dj_serve_middleware
+    app = dj_serve_middleware(django_app, str(static_dir), async_mode=True)
 
     # Verify it's wrapped
     assert app is not None
@@ -263,7 +263,7 @@ def test_middleware_integration_asgi(static_dir, settings):
 def test_production_warning_in_production_mode(static_dir, settings, caplog):
     """Test that a warning is logged when using builtin in production."""
     import logging
-    from dj_spa import dj_spa
+    from dj_serve import dj_serve
 
     # Set DEBUG to False (production mode)
     settings.DEBUG = False
@@ -271,7 +271,7 @@ def test_production_warning_in_production_mode(static_dir, settings, caplog):
 
     # Capture warnings
     with caplog.at_level(logging.WARNING):
-        dj_spa("/", str(static_dir))
+        dj_serve("/", str(static_dir))
 
     # Check if warning was logged
     assert any(
@@ -283,14 +283,14 @@ def test_production_warning_in_production_mode(static_dir, settings, caplog):
 def test_no_warning_in_debug_mode(static_dir, settings, caplog):
     """Test that no warning is logged when DEBUG is True."""
     import logging
-    from dj_spa import dj_spa
+    from dj_serve import dj_serve
 
     # Set DEBUG to True (development mode)
     settings.DEBUG = True
     settings.MIDDLEWARE = []
 
     with caplog.at_level(logging.WARNING):
-        dj_spa("/", str(static_dir))
+        dj_serve("/", str(static_dir))
 
     # Check that no warning was logged
     assert not any(
@@ -302,14 +302,14 @@ def test_no_warning_in_debug_mode(static_dir, settings, caplog):
 def test_no_warning_with_static_middleware(static_dir, settings, caplog):
     """Test that no warning is logged when static middleware is configured."""
     import logging
-    from dj_spa import dj_spa
+    from dj_serve import dj_serve
 
     # Set DEBUG to False but configure middleware
     settings.DEBUG = False
     settings.MIDDLEWARE = ["whitenoise.middleware.WhiteNoiseMiddleware"]
 
     with caplog.at_level(logging.WARNING):
-        dj_spa("/", str(static_dir))
+        dj_serve("/", str(static_dir))
 
     # Check that no warning was logged
     assert not any(

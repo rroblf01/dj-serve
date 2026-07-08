@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import patch
 
-from dj_spa import dj_spa
-from dj_spa.views import async_spa_view
+from dj_serve import dj_serve
+from dj_serve.views import async_spa_view
 
 
 def _content(response):
@@ -271,21 +271,21 @@ async def test_async_cache_control_dict(rf, tmp_path):
     assert response["Cache-Control"] == "no-cache"
 
 
-def test_async_mode_in_dj_spa(tmp_path):
+def test_async_mode_in_dj_serve(tmp_path):
     dist = tmp_path / "dist"
     dist.mkdir()
     (dist / "index.html").write_text("<html>index</html>")
 
-    pattern = dj_spa("/", str(dist), async_mode=True)
+    pattern = dj_serve("/", str(dist), async_mode=True)
     assert getattr(pattern.callback, "__name__", None) == "async_spa_view"
 
 
-def test_sync_mode_in_dj_spa(tmp_path):
+def test_sync_mode_in_dj_serve(tmp_path):
     dist = tmp_path / "dist"
     dist.mkdir()
     (dist / "index.html").write_text("<html>index</html>")
 
-    pattern = dj_spa("/", str(dist), async_mode=False)
+    pattern = dj_serve("/", str(dist), async_mode=False)
     assert getattr(pattern.callback, "__name__", None) == "spa_view"
 
 
@@ -294,5 +294,5 @@ def test_default_mode_is_sync(tmp_path):
     dist.mkdir()
     (dist / "index.html").write_text("<html>index</html>")
 
-    pattern = dj_spa("/", str(dist))
+    pattern = dj_serve("/", str(dist))
     assert getattr(pattern.callback, "__name__", None) == "spa_view"

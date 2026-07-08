@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
-from dj_spa import dj_spa
-from dj_spa.views import spa_view
+from dj_serve import dj_serve
+from dj_serve.views import spa_view
 
 
 def _content(response):
@@ -267,12 +267,12 @@ def test_cache_control_on_error_page(rf, tmp_path):
     assert response["Cache-Control"] == "no-cache"
 
 
-def test_cache_control_in_dj_spa(tmp_path):
+def test_cache_control_in_dj_serve(tmp_path):
     dist = tmp_path / "dist"
     dist.mkdir()
     (dist / "index.html").write_text("<html>index</html>")
 
-    pattern = dj_spa("/", str(dist), cache_control="public, max-age=86400")
+    pattern = dj_serve("/", str(dist), cache_control="public, max-age=86400")
     assert pattern.default_args["cache_control"] == "public, max-age=86400"
 
 
@@ -281,7 +281,7 @@ def test_url_pattern_resolves(tmp_path):
     dist.mkdir()
     (dist / "index.html").write_text("<html>index</html>")
 
-    pattern = dj_spa("/", str(dist))
+    pattern = dj_serve("/", str(dist))
     match = pattern.resolve("/")
     assert match is not None
     assert match.kwargs["path"] == ""
@@ -304,7 +304,7 @@ def test_url_pattern_with_prefix(tmp_path):
     dist.mkdir()
     (dist / "index.html").write_text("<html>index</html>")
 
-    pattern = dj_spa("/app", str(dist))
+    pattern = dj_serve("/app", str(dist))
     # Should not match root
     match = pattern.resolve("/")
     assert match is None

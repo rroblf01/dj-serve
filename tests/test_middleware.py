@@ -1,9 +1,9 @@
-"""Unit tests for dj_spa_middleware()."""
+"""Unit tests for dj_serve_middleware()."""
 
 import pytest
 from unittest.mock import MagicMock, patch
 
-from dj_spa import dj_spa_middleware
+from dj_serve import dj_serve_middleware
 
 
 def test_middleware_wsgi_mode():
@@ -11,9 +11,9 @@ def test_middleware_wsgi_mode():
     app = MagicMock()
     dist_dir = "/tmp/dist"
 
-    with patch("dj_spa.middleware._setup_whitenoise") as mock_setup:
+    with patch("dj_serve.middleware._setup_whitenoise") as mock_setup:
         mock_setup.return_value = MagicMock()
-        result = dj_spa_middleware(app, dist_dir, async_mode=False)
+        result = dj_serve_middleware(app, dist_dir, async_mode=False)
 
         mock_setup.assert_called_once_with(app, dist_dir)
         assert result == mock_setup.return_value
@@ -24,9 +24,9 @@ def test_middleware_asgi_mode():
     app = MagicMock()
     dist_dir = "/tmp/dist"
 
-    with patch("dj_spa.middleware._setup_whitesnout") as mock_setup:
+    with patch("dj_serve.middleware._setup_whitesnout") as mock_setup:
         mock_setup.return_value = MagicMock()
-        result = dj_spa_middleware(app, dist_dir, async_mode=True)
+        result = dj_serve_middleware(app, dist_dir, async_mode=True)
 
         mock_setup.assert_called_once_with(app, dist_dir)
         assert result == mock_setup.return_value
@@ -37,9 +37,9 @@ def test_middleware_default_is_wsgi():
     app = MagicMock()
     dist_dir = "/tmp/dist"
 
-    with patch("dj_spa.middleware._setup_whitenoise") as mock_setup:
+    with patch("dj_serve.middleware._setup_whitenoise") as mock_setup:
         mock_setup.return_value = MagicMock()
-        result = dj_spa_middleware(app, dist_dir)
+        result = dj_serve_middleware(app, dist_dir)
 
         mock_setup.assert_called_once_with(app, dist_dir)
         assert result == mock_setup.return_value
@@ -51,9 +51,9 @@ def test_middleware_passes_kwargs():
     dist_dir = "/tmp/dist"
     kwargs = {"cache_max_age": 3600, "security_headers": True}
 
-    with patch("dj_spa.middleware._setup_whitenoise") as mock_setup:
+    with patch("dj_serve.middleware._setup_whitenoise") as mock_setup:
         mock_setup.return_value = MagicMock()
-        dj_spa_middleware(app, dist_dir, async_mode=False, **kwargs)
+        dj_serve_middleware(app, dist_dir, async_mode=False, **kwargs)
 
         mock_setup.assert_called_once_with(app, dist_dir, **kwargs)
 
@@ -63,11 +63,11 @@ def test_middleware_wsgi_missing_whitenoise():
     app = MagicMock()
     dist_dir = "/tmp/dist"
 
-    with patch("dj_spa.middleware._setup_whitenoise") as mock_setup:
+    with patch("dj_serve.middleware._setup_whitenoise") as mock_setup:
         mock_setup.side_effect = ImportError("WhiteNoise not installed")
 
         with pytest.raises(ImportError, match="WhiteNoise not installed"):
-            dj_spa_middleware(app, dist_dir, async_mode=False)
+            dj_serve_middleware(app, dist_dir, async_mode=False)
 
 
 def test_middleware_asgi_missing_whitesnout():
@@ -75,16 +75,16 @@ def test_middleware_asgi_missing_whitesnout():
     app = MagicMock()
     dist_dir = "/tmp/dist"
 
-    with patch("dj_spa.middleware._setup_whitesnout") as mock_setup:
+    with patch("dj_serve.middleware._setup_whitesnout") as mock_setup:
         mock_setup.side_effect = ImportError("WhiteSnout not installed")
 
         with pytest.raises(ImportError, match="WhiteSnout not installed"):
-            dj_spa_middleware(app, dist_dir, async_mode=True)
+            dj_serve_middleware(app, dist_dir, async_mode=True)
 
 
 def test_setup_whitenoise_with_real_library(tmp_path):
     """Test that _setup_whitenoise works with real WhiteNoise library."""
-    from dj_spa.middleware import _setup_whitenoise
+    from dj_serve.middleware import _setup_whitenoise
     from whitenoise import WhiteNoise
 
     # Create a simple WSGI app
@@ -106,7 +106,7 @@ def test_setup_whitenoise_with_real_library(tmp_path):
 
 def test_setup_whitesnout_with_real_library(tmp_path):
     """Test that _setup_whitesnout works with real WhiteSnout library."""
-    from dj_spa.middleware import _setup_whitesnout
+    from dj_serve.middleware import _setup_whitesnout
     from whitesnout import WhiteSnout
 
     # Create a simple ASGI app

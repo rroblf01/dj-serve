@@ -1,29 +1,29 @@
 import pytest
-from dj_spa import DjSpaConfigError, dj_spa
+from dj_serve import DjServeConfigError, dj_serve
 
 
 def test_validate_config_dist_dir_not_exists(tmp_path):
-    """Test that DjSpaConfigError is raised when dist_dir doesn't exist."""
-    with pytest.raises(DjSpaConfigError, match="dist_dir does not exist"):
-        dj_spa("/", str(tmp_path / "nonexistent"))
+    """Test that DjServeConfigError is raised when dist_dir doesn't exist."""
+    with pytest.raises(DjServeConfigError, match="dist_dir does not exist"):
+        dj_serve("/", str(tmp_path / "nonexistent"))
 
 
 def test_validate_config_dist_dir_not_directory(tmp_path):
-    """Test that DjSpaConfigError is raised when dist_dir is not a directory."""
+    """Test that DjServeConfigError is raised when dist_dir is not a directory."""
     file_path = tmp_path / "file.txt"
     file_path.write_text("content")
 
-    with pytest.raises(DjSpaConfigError, match="dist_dir is not a directory"):
-        dj_spa("/", str(file_path))
+    with pytest.raises(DjServeConfigError, match="dist_dir is not a directory"):
+        dj_serve("/", str(file_path))
 
 
 def test_validate_config_entry_point_not_exists(tmp_path):
-    """Test that DjSpaConfigError is raised when entry_point doesn't exist."""
+    """Test that DjServeConfigError is raised when entry_point doesn't exist."""
     dist = tmp_path / "dist"
     dist.mkdir()
 
-    with pytest.raises(DjSpaConfigError, match="entry_point.*not found"):
-        dj_spa("/", str(dist), entry_point="nonexistent.html")
+    with pytest.raises(DjServeConfigError, match="entry_point.*not found"):
+        dj_serve("/", str(dist), entry_point="nonexistent.html")
 
 
 def test_validate_config_error_400_not_exists(tmp_path, caplog):
@@ -33,7 +33,7 @@ def test_validate_config_error_400_not_exists(tmp_path, caplog):
     (dist / "index.html").write_text("<html>index</html>")
 
     with caplog.at_level("WARNING"):
-        dj_spa("/", str(dist), error_400=str(tmp_path / "400.html"))
+        dj_serve("/", str(dist), error_400=str(tmp_path / "400.html"))
 
     assert "error_400_path does not exist" in caplog.text
 
@@ -45,7 +45,7 @@ def test_validate_config_error_500_not_exists(tmp_path, caplog):
     (dist / "index.html").write_text("<html>index</html>")
 
     with caplog.at_level("WARNING"):
-        dj_spa("/", str(dist), error_500=str(tmp_path / "500.html"))
+        dj_serve("/", str(dist), error_500=str(tmp_path / "500.html"))
 
     assert "error_500_path does not exist" in caplog.text
 
@@ -59,7 +59,7 @@ def test_validate_config_success(tmp_path):
     (dist / "500.html").write_text("<html>500</html>")
 
     # Should not raise any exceptions
-    dj_spa(
+    dj_serve(
         "/",
         str(dist),
         entry_point="index.html",
