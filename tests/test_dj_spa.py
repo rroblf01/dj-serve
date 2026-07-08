@@ -120,6 +120,101 @@ def test_correct_mimetype(rf, tmp_path):
     assert response["Content-Type"] == "text/css"
 
 
+def test_cache_control_none(rf, tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "style.css").write_text("body { color: red; }")
+    (dist / "index.html").write_text("<html>index</html>")
+
+    request = rf.get("/style.css")
+    response = spa_view(
+        request, path="style.css", dist_dir=str(dist), entry_point="index.html"
+    )
+    assert "Cache-Control" not in response
+
+
+def test_cache_control_string(rf, tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "style.css").write_text("body { color: red; }")
+    (dist / "index.html").write_text("<html>index</html>")
+
+    request = rf.get("/style.css")
+    response = spa_view(
+        request, path="style.css", dist_dir=str(dist), entry_point="index.html",
+        cache_control="public, max-age=3600"
+    )
+    assert response["Cache-Control"] == "public, max-age=3600"
+
+    request = rf.get("/")
+    response = spa_view(
+        request, path="", dist_dir=str(dist), entry_point="index.html",
+        cache_control="public, max-age=3600"
+    )
+    assert response["Cache-Control"] == "public, max-age=3600"
+
+
+def test_cache_control_dict(rf, tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "style.css").write_text("body { color: red; }")
+    (dist / "script.js").write_text("console.log('hi')")
+    (dist / "app.html").write_text("<html>app</html>")
+    (dist / "index.html").write_text("<html>index</html>")
+
+    cc = {
+        "*.html": "no-cache",
+        "*.css": "public, max-age=31536000, immutable",
+        "*": "public, max-age=3600",
+    }
+
+    request = rf.get("/style.css")
+    response = spa_view(
+        request, path="style.css", dist_dir=str(dist), entry_point="index.html",
+        cache_control=cc
+    )
+    assert response["Cache-Control"] == "public, max-age=31536000, immutable"
+
+    request = rf.get("/script.js")
+    response = spa_view(
+        request, path="script.js", dist_dir=str(dist), entry_point="index.html",
+        cache_control=cc
+    )
+    assert response["Cache-Control"] == "public, max-age=3600"
+
+    request = rf.get("/")
+    response = spa_view(
+        request, path="", dist_dir=str(dist), entry_point="index.html",
+        cache_control=cc
+    )
+    assert response["Cache-Control"] == "no-cache"
+
+
+def test_cache_control_on_error_page(rf, tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    error_400 = tmp_path / "400.html"
+    error_400.write_text("<html>bad request</html>")
+
+    request = rf.get("/")
+    response = spa_view(
+        request, path="", dist_dir=str(dist), entry_point="nonexistent.html",
+        error_400_path=str(error_400),
+        cache_control={"*.html": "no-cache"},
+    )
+    assert response.status_code == 400
+    assert response["Cache-Control"] == "no-cache"
+
+
+def test_cache_control_in_dj_spa(tmp_path):
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "index.html").write_text("<html>index</html>")
+
+    pattern = dj_spa("/", str(dist), cache_control="public, max-age=86400")
+    assert pattern.default_args["cache_control"] == "public, max-age=86400"
+
+
 def test_url_pattern_resolves():
     pattern = dj_spa("/", "/tmp/dist")
     match = pattern.resolve("/")
