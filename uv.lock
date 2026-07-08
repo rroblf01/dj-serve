@@ -16,6 +16,20 @@ wheels = [
 ]
 
 [[package]]
+name = "anyio"
+version = "4.14.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
+    { name = "idna" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3b/72/5562aabb8dd7181e8e860622a38bea08d17842b99ecd4c91f84ac95251b0/anyio-4.14.1.tar.gz", hash = "sha256:8d648a3544c1a700e3ff78615cd679e4c5c3f149904287e73687b2596963629e", size = 254831, upload-time = "2026-06-24T20:56:06.017Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b0/7b/90df4a0a816d98d6ea26f559d87836d494a2cf1fcf063be67df50a7bcc30/anyio-4.14.1-py3-none-any.whl", hash = "sha256:4e5533c5b8ff0a24f5d7a176cbe6877129cd183893f66b537f8f227d10527d72", size = 124875, upload-time = "2026-06-24T20:56:04.413Z" },
+]
+
+[[package]]
 name = "asgiref"
 version = "3.11.1"
 source = { registry = "https://pypi.org/simple" }
@@ -37,6 +51,15 @@ wheels = [
 ]
 
 [[package]]
+name = "certifi"
+version = "2026.6.17"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c9/c7/424b75da314c1045981bd9777432fad05a9e0c69daa4ed7e308bbaffe405/certifi-2026.6.17.tar.gz", hash = "sha256:024c88eeec92ca068db80f02b8b07c9cef7b9fe261d1d535abfd5abd6f6af432", size = 134594, upload-time = "2026-06-17T10:31:07.894Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ef/2f/c5464532e965badff2f4c4c1a3a83f5697f0d7c407ed0cda44aaa99bb451/certifi-2026.6.17-py3-none-any.whl", hash = "sha256:2227dcbaafe0d2f59279d1762ddddc37783ed4354594f194ffc31d20f41fc3db", size = 133289, upload-time = "2026-06-17T10:31:06.348Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -55,28 +78,40 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+asgi = [
+    { name = "whitesnout" },
+]
 async = [
     { name = "aiofiles" },
 ]
 dev = [
     { name = "aiofiles" },
     { name = "django-stubs" },
+    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-django" },
     { name = "ruff" },
     { name = "ty" },
+    { name = "whitenoise" },
+    { name = "whitesnout" },
+]
+wsgi = [
+    { name = "whitenoise" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "aiofiles" },
     { name = "django-stubs" },
+    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-django" },
     { name = "ruff" },
     { name = "ty" },
+    { name = "whitenoise" },
+    { name = "whitesnout" },
 ]
 
 [package.metadata]
@@ -85,23 +120,31 @@ requires-dist = [
     { name = "aiofiles", marker = "extra == 'dev'", specifier = ">=25.1.0" },
     { name = "django", specifier = ">=4.0" },
     { name = "django-stubs", marker = "extra == 'dev'", specifier = ">=5" },
+    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.1.1" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=1.4.0" },
     { name = "pytest-django", marker = "extra == 'dev'", specifier = ">=4" },
     { name = "ruff", marker = "extra == 'dev'", specifier = "==0.15.20" },
     { name = "ty", marker = "extra == 'dev'", specifier = "==0.0.56" },
+    { name = "whitenoise", marker = "extra == 'dev'", specifier = ">=6.0" },
+    { name = "whitenoise", marker = "extra == 'wsgi'", specifier = ">=6.0" },
+    { name = "whitesnout", marker = "extra == 'asgi'", specifier = ">=1.0" },
+    { name = "whitesnout", marker = "extra == 'dev'", specifier = ">=1.0" },
 ]
-provides-extras = ["async", "dev"]
+provides-extras = ["async", "wsgi", "asgi", "dev"]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "aiofiles", specifier = ">=25.1.0" },
     { name = "django-stubs", specifier = ">=5" },
+    { name = "httpx", specifier = ">=0.27.0" },
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "pytest-asyncio", specifier = ">=1.4.0" },
     { name = "pytest-django", specifier = ">=4" },
     { name = "ruff", specifier = "==0.15.20" },
     { name = "ty", specifier = "==0.0.56" },
+    { name = "whitenoise", specifier = ">=6.0" },
+    { name = "whitesnout", specifier = ">=1.0" },
 ]
 
 [[package]]
@@ -179,6 +222,52 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8a/0e/97c33bf5009bdbac74fd2beace167cab3f978feb69cc36f1ef79360d6c4e/exceptiongroup-1.3.1-py3-none-any.whl", hash = "sha256:a7a39a3bd276781e98394987d3a5701d0c4edffb633bb7a5144577f82c773598", size = 16740, upload-time = "2025-11-21T23:01:53.443Z" },
+]
+
+[[package]]
+name = "h11"
+version = "0.16.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/01/ee/02a2c011bdab74c6fb3c75474d40b3052059d95df7e73351460c8588d963/h11-0.16.0.tar.gz", hash = "sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1", size = 101250, upload-time = "2025-04-24T03:35:25.427Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl", hash = "sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86", size = 37515, upload-time = "2025-04-24T03:35:24.344Z" },
+]
+
+[[package]]
+name = "httpcore"
+version = "1.0.9"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "certifi" },
+    { name = "h11" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/06/94/82699a10bca87a5556c9c59b5963f2d039dbd239f25bc2a63907a05a14cb/httpcore-1.0.9.tar.gz", hash = "sha256:6e34463af53fd2ab5d807f399a9b45ea31c3dfa2276f15a2c3f00afff6e176e8", size = 85484, upload-time = "2025-04-24T22:06:22.219Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl", hash = "sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55", size = 78784, upload-time = "2025-04-24T22:06:20.566Z" },
+]
+
+[[package]]
+name = "httpx"
+version = "0.28.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "certifi" },
+    { name = "httpcore" },
+    { name = "idna" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b1/df/48c586a5fe32a0f01324ee087459e112ebb7224f646c0b5023f5e79e9956/httpx-0.28.1.tar.gz", hash = "sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc", size = 141406, upload-time = "2024-12-06T15:37:23.222Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl", hash = "sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad", size = 73517, upload-time = "2024-12-06T15:37:21.509Z" },
+]
+
+[[package]]
+name = "idna"
+version = "3.18"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/cd/63/9496c57188a2ee585e0f1db071d75089a11e98aa86eb99d9d7618fc1edce/idna-3.18.tar.gz", hash = "sha256:ffb385a7e039654cef1ab9ef32c6fafe283c0c0467bba1d9029738ce4a14a848", size = 196711, upload-time = "2026-06-02T14:34:07.794Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1e/5e/d4e9f1a599fb8e573b7b87160658329fbf28d19eac2718f51fc3def3aa5a/idna-3.18-py3-none-any.whl", hash = "sha256:7f952cbe720b688055e3f87de14f5c3e5fdaa8bc3928985c4077ca689de849a2", size = 65455, upload-time = "2026-06-02T14:34:06.319Z" },
 ]
 
 [[package]]
@@ -399,4 +488,28 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ba/19/1b9b0e29f30c6d35cb345486df41110984ea67ae69dddbc0e8a100999493/tzdata-2026.2.tar.gz", hash = "sha256:9173fde7d80d9018e02a662e168e5a2d04f87c41ea174b139fbef642eda62d10", size = 198254, upload-time = "2026-04-24T15:22:08.651Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ce/e4/dccd7f47c4b64213ac01ef921a1337ee6e30e8c6466046018326977efd95/tzdata-2026.2-py2.py3-none-any.whl", hash = "sha256:bbe9af844f658da81a5f95019480da3a89415801f6cc966806612cc7169bffe7", size = 349321, upload-time = "2026-04-24T15:22:05.876Z" },
+]
+
+[[package]]
+name = "whitenoise"
+version = "6.12.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/cb/2a/55b3f3a4ec326cd077c1c3defeee656b9298372a69229134d930151acd01/whitenoise-6.12.0.tar.gz", hash = "sha256:f723ebb76a112e98816ff80fcea0a6c9b8ecde835f8ddda25df7a30a3c2db6ad", size = 26841, upload-time = "2026-02-27T00:05:42.028Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/db/eb/d5583a11486211f3ebd4b385545ae787f32363d453c19fffd81106c9c138/whitenoise-6.12.0-py3-none-any.whl", hash = "sha256:fc5e8c572e33ebf24795b47b6a7da8da3c00cff2349f5b04c02f28d0cc5a3cc2", size = 20302, upload-time = "2026-02-27T00:05:40.086Z" },
+]
+
+[[package]]
+name = "whitesnout"
+version = "2.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f1/d4/d211bb58f588d00fc9d2c52e06c076fbf93a62ce5a8cc906511af08ad52c/whitesnout-2.1.0.tar.gz", hash = "sha256:309f177a1645e4beab9214c51df4451407b162a18bce39406d0b7f14060525f5", size = 156204, upload-time = "2026-05-22T09:01:05.671Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6b/46/854ba4fce53bd11e6e4bff8b66bef142e954422503c68a33c3cc61af09e7/whitesnout-2.1.0-cp310-abi3-macosx_10_12_x86_64.whl", hash = "sha256:7668b031952326f6b0bd6793881cbc938e1163f8cebfb2757be89a99c6deb36e", size = 981935, upload-time = "2026-05-22T09:00:52.948Z" },
+    { url = "https://files.pythonhosted.org/packages/cf/d6/745470da8b5352351820052ce100b24d0c89744cc18f16d374c14b46f79d/whitesnout-2.1.0-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:359c0a6d88e2c377bedaf2f0304fad5c6a576b398ee94acc4e09e7ad741b231f", size = 933589, upload-time = "2026-05-22T09:00:55.179Z" },
+    { url = "https://files.pythonhosted.org/packages/44/6d/bd7528d82e35d646f38e6a4e270c3cad1b61ba30773256ca1e89897158a6/whitesnout-2.1.0-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:81fa17022dcf909ea5f684247ac01361b7ba7a5fc9aa587e409e6f2a02c16458", size = 1058919, upload-time = "2026-05-22T09:00:56.796Z" },
+    { url = "https://files.pythonhosted.org/packages/3e/ad/e0b2d90662ed54277c34e47d915b88d934f7ba63ca9fbd5d726bb3a56f26/whitesnout-2.1.0-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:664549b7cf46e2c35be3753bffe305ce5ef0d3720f8cb67d3a104d83699b9da5", size = 1079773, upload-time = "2026-05-22T09:00:58.601Z" },
+    { url = "https://files.pythonhosted.org/packages/b3/15/6eca1c4c6a305793f8d30b4b5a53b4c604362c3970ec99c328d8ca139512/whitesnout-2.1.0-cp310-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:f47c413e2ed4cfeaf0334030878853add16fbfdb6e111b1e7539897cbd5e713f", size = 1124139, upload-time = "2026-05-22T09:01:00.687Z" },
+    { url = "https://files.pythonhosted.org/packages/36/05/090b65c1efa99dbb69f676a95e501c62edf3a9d399a7fb12af56e9402481/whitesnout-2.1.0-cp310-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:016ee9f8057f4802e44de61302a1d7a8186b289e04fbf4a405e89020bca25b3a", size = 1181117, upload-time = "2026-05-22T09:01:02.386Z" },
+    { url = "https://files.pythonhosted.org/packages/1d/dd/9f9f4f0e991a89e419aab4b5a08bf3184059164e6ccd0737d8fdfcd9b5fe/whitesnout-2.1.0-cp310-abi3-win_amd64.whl", hash = "sha256:871968e0be3074db3c280af25b15650f03c49d23f31970b3076ea3ed920c8237", size = 870710, upload-time = "2026-05-22T09:01:03.853Z" },
 ]
