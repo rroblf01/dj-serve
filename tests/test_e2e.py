@@ -316,3 +316,77 @@ def test_no_warning_with_static_middleware(static_dir, settings, caplog):
         "builtin static file server in production" in record.message
         for record in caplog.records
     )
+
+
+def test_production_warning_asgi(static_dir, settings, caplog):
+    """Test warning mentions asgi.py when async_mode=True."""
+    import logging
+    from dj_serve import dj_serve
+
+    settings.DEBUG = False
+    settings.MIDDLEWARE = []
+
+    with caplog.at_level(logging.WARNING):
+        dj_serve("/", str(static_dir), async_mode=True)
+
+    assert any("asgi.py" in record.message for record in caplog.records), (
+        "Warning should mention asgi.py"
+    )
+
+
+def test_middleware_as_tuple(static_dir, settings, caplog):
+    """MIDDLEWARE as a tuple is handled correctly."""
+    import logging
+    from dj_serve import dj_serve
+
+    settings.DEBUG = False
+    settings.MIDDLEWARE = ("whitenoise.middleware.WhiteNoiseMiddleware",)
+
+    with caplog.at_level(logging.WARNING):
+        dj_serve("/", str(static_dir))
+
+    assert not any(
+        "builtin static file server in production" in record.message
+        for record in caplog.records
+    )
+
+
+def test_middleware_various_casing(static_dir, settings, caplog):
+    """Middleware detection works with various casing."""
+    import logging
+    from dj_serve import dj_serve
+
+    settings.DEBUG = False
+    cases = [
+        "whitenoise.middleware.WhiteNoiseMiddleware",
+        "WhiteNoise",
+        "whitesnout.middleware.WhiteSnoutMiddleware",
+        "WhiteSnout",
+        "WHITENOISE",
+    ]
+    for middleware_value in cases:
+        settings.MIDDLEWARE = [middleware_value]
+        with caplog.at_level(logging.WARNING):
+            dj_serve("/", str(static_dir))
+
+        assert not any(
+            "builtin static file server in production" in record.message
+            for record in caplog.records
+        ), f"Warning should not appear with middleware={middleware_value}"
+        caplog.clear()
+
+
+def test_production_warning_wsgi(static_dir, settings, caplog):
+    """Test warning mentions wsgi.py when async_mode=False (default)."""
+    import logging
+    from dj_serve import dj_serve
+
+    settings.DEBUG = False
+    settings.MIDDLEWARE = []
+
+    with caplog.at_level(logging.WARNING):
+        dj_serve("/", str(static_dir), async_mode=False)
+
+    assert any("wsgi.py" in record.message for record in caplog.records), (
+        "Warning should mention wsgi.py"
+    )

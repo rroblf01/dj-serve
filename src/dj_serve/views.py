@@ -99,7 +99,9 @@ async def async_serve_view(
         if not str(target).startswith(str(dist)):
             return HttpResponseNotFound("Not Found")
 
-        if await aiofiles.os.path.exists(target) and target.is_file():
+        if await aiofiles.os.path.exists(target) and await aiofiles.os.path.isfile(
+            target
+        ):
             return await _async_file_response(target, cache_control=cache_control)
 
         entry = dist / entry_point

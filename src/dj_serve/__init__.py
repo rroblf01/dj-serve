@@ -3,6 +3,7 @@ __all__ = ["dj_serve", "dj_serve_middleware", "DjServeConfigError"]
 import logging
 from typing import Callable
 
+from django import VERSION
 from django.conf import settings
 from django.urls import re_path
 from django.urls.resolvers import URLPattern
@@ -52,8 +53,7 @@ def dj_serve(
             f"{server_type} with the appropriate backend."
         )
 
-    prefix = prefix.rstrip("/")
-    regex = rf"^{prefix}/(?P<path>.*)$"
+    regex = _build_regex(prefix, VERSION)
     view: Callable = async_serve_view if async_mode else serve_view
     return re_path(
         regex,
@@ -66,6 +66,29 @@ def dj_serve(
             "cache_control": cache_control,
         },
     )
+
+
+def _build_regex(prefix: str, django_version: tuple) -> str:
+    """Build the URL regex pattern based on Django version.
+
+    Django 6.0+ uses URLResolver root pattern r"^/", which strips the
+    leading slash before child patterns are matched. Earlier versions
+    preserve the full path, so the pattern must include the leading /.
+
+    Args:
+        prefix: URL prefix for the SPA (e.g., "/" or "/app").
+        django_version: Django version tuple (e.g., (6, 0, 7, 'final', 0)).
+
+    Returns:
+        Regex string for URL pattern matching.
+    """
+    if django_version >= (6, 0):
+        clean_prefix = prefix.strip("/")
+        if clean_prefix:
+            return rf"^{clean_prefix}/(?P<path>.*)$"
+        return r"^(?P<path>.*)$"
+    clean_prefix = prefix.rstrip("/")
+    return rf"^{clean_prefix}/(?P<path>.*)$"
 
 
 def _has_static_middleware() -> bool:

@@ -66,3 +66,26 @@ def test_validate_config_success(tmp_path):
         error_400=str(dist / "400.html"),
         error_500=str(dist / "500.html"),
     )
+
+
+def test_error_path_empty_string(tmp_path, caplog):
+    """Empty string error paths are silently ignored (no warning)."""
+    dist = tmp_path / "dist"
+    dist.mkdir()
+    (dist / "index.html").write_text("<html>index</html>")
+
+    with caplog.at_level("WARNING"):
+        dj_serve("/", str(dist), error_400="", error_500="")
+
+    assert "error_400_path does not exist" not in caplog.text
+    assert "error_500_path does not exist" not in caplog.text
+
+
+def test_dj_serve_config_error_is_exception():
+    """DjServeConfigError is a proper Exception subclass."""
+    from dj_serve import DjServeConfigError
+
+    assert issubclass(DjServeConfigError, Exception)
+    # Can be instantiated with a message
+    err = DjServeConfigError("test error")
+    assert str(err) == "test error"

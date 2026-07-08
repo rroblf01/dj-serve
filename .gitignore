@@ -1,10 +1,41 @@
 # Python-generated files
 __pycache__/
 *.py[oc]
+*.egg-info/
+*.egg
 build/
 dist/
 wheels/
-*.egg-info
 
 # Virtual environments
 .venv
+.env
+.env.*
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+coverage/
+*.cover
+*,cover
+
+# Caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.dmypy.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test project
+test_project/
